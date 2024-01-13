@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from dateutil import parser
 
 
 def yesterday():
@@ -8,7 +9,12 @@ def yesterday():
     return __date_iso(yesterday)
 
 
-def __date_iso(date):
+def date_parsed(date: str):
+    date_dt = parser.parse(date)
+    return __date_iso(date_dt)
+
+
+def __date_iso(date: datetime):
     return (
         date.astimezone().replace(tzinfo=None).isoformat(timespec="milliseconds") + "Z"
     )

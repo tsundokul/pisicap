@@ -28,7 +28,7 @@ class SICAP:
         """Returns server time as string e.g. 2023-06-01T00:00:00.000Z"""
         return self.session.get("/time/getServerTime").text
 
-    def getCNoticeList(self, body_params_overrides: dict = {}) -> httpx.Response:
+    def getCANoticeList(self, body_params_overrides: dict = {}) -> httpx.Response:
         """Returns a list of notices based on given filters"""
         body = {
             "sysNoticeTypeIds": [],
@@ -86,3 +86,10 @@ class SICAP:
 
         body.update(body_params_overrides)
         return self.session.post("/C_PUBLIC_CANotice/GetCANoticeContracts", json=body)
+
+    def getPUBLICPINoticeAll(self, body_params_overrides: dict = {}) -> httpx.Response:
+        """Returns priorinformation notices"""
+        body = {"pageIndex": 0, "pageSize": 18, "sortProperties": [], "cpv": None}
+        body.update(body_params_overrides)
+
+        return self.session.post("/PUBLICPINotice/GetAll/", json=body)
