@@ -93,3 +93,31 @@ class SICAP:
         body.update(body_params_overrides)
 
         return self.session.post("/PUBLICPINotice/GetAll/", json=body)
+
+    def getCNoticeList(self, body_params_overrides: dict = {}) -> httpx.Response:
+        body = {
+            "sysNoticeTypeIds": [],
+            "sortProperties": [],
+            "pageSize": 5,
+            "hasUnansweredQuestions": False,
+            "pageIndex": 0,
+            "startTenderReceiptDeadline": None,
+            "sysProcedureStateId": 2,
+            "sysProcedurePhaseId": 4,
+            "startPublicationDate": None,
+            "endPublicationDate": None,
+        }
+        # sysProcedurePhaseId
+        # 9: "Submit Application"
+        # 10: "Evaluate Application"
+        # 2: "Submit Bid"
+        # 3: "Evaluate Qualification and Technical"
+        # 11: "Financial Evaluation"
+        # 12: "Re-bidding"
+        # 6: "Electronic Auction"
+        # 4 "Deliberation"
+        # 5: "Awarded"
+        # 2 (without a label)
+
+        body.update(body_params_overrides)
+        return self.session.post("/NoticeCommon/GetCNoticeList/", json=body)
