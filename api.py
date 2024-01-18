@@ -121,3 +121,30 @@ class SICAP:
 
         body.update(body_params_overrides)
         return self.session.post("/NoticeCommon/GetCNoticeList/", json=body)
+
+    def getDaAwardNoticeList(self, body_params_overrides: dict = {}) -> httpx.Response:
+        body = {
+            "pageSize": 5,
+            "publicationDateStart": utils.yesterday(),
+            "pageIndex": 0,
+            # "noticeNo": "number",
+            # "contractObject": "procurement",
+            # "awardedValueStart": 0,
+            # "awardedValueEnd": 0.01,
+            # "publicationDateEnd": "2024-01-15T22:00:00.000Z",
+            # "cpvCodeText": "cpv"
+        }
+
+        body.update(body_params_overrides)
+        return self.session.post(
+            "/DaAwardNoticeCommon/GetDaAwardNoticeList/", json=body
+        )
+
+    def getPublicDAAwardNotice(self, notice_id: int) -> httpx.Response:
+        return self.session.get(f"/PublicDAAwardNotice/getView/{notice_id}")
+
+    def getCAEntityView(self, ca_entity_id: int) -> httpx.Response:
+        return self.session.get(f"/Entity/getCAEntityView/{ca_entity_id}")
+
+    def getSUEntityView(self, su_entity_id: int) -> httpx.Response:
+        return self.session.get(f"/Entity/getSUEntityView/{su_entity_id}")

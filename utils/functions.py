@@ -1,7 +1,8 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dateutil import parser
 
 DELTA_6MONTHS = timedelta(weeks=4 * 6)
+DELTA_1H = timedelta(minutes=60)
 
 
 def yesterday() -> str:
@@ -11,11 +12,11 @@ def yesterday() -> str:
 
 
 def now():
-    return datetime.utcnow()
+    return datetime.now()
 
 
 def date_parsed(date: str, raw=False):
-    date_dt = parser.parse(date)
+    date_dt = parser.parse(date, ignoretz=True)
     return date_dt if raw else date_iso(date_dt)
 
 
