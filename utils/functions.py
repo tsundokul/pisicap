@@ -1,5 +1,7 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from dateutil import parser
+import json
+import pathlib
 
 DELTA_6MONTHS = timedelta(weeks=4 * 6)
 DELTA_1H = timedelta(minutes=60)
@@ -24,3 +26,9 @@ def date_iso(date: datetime) -> str:
     return (
         date.astimezone().replace(tzinfo=None).isoformat(timespec="milliseconds") + "Z"
     )
+
+
+def read_cpvs() -> dict:
+    cpvs_path = pathlib.Path(__file__).parent / "cpvs.json"
+    with open(cpvs_path) as f:
+        return json.load(f)

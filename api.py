@@ -148,3 +148,36 @@ class SICAP:
 
     def getSUEntityView(self, su_entity_id: int) -> httpx.Response:
         return self.session.get(f"/Entity/getSUEntityView/{su_entity_id}")
+
+    def getDirectAcquisitionList(
+        self, body_params_overrides: dict = {}
+    ) -> httpx.Response:
+        body = {
+            "pageSize": 2000,
+            "showOngoingDa": False,
+            "cookieContext": None,
+            "pageIndex": 0,
+            "sysDirectAcquisitionStateId": None,
+            "publicationDateStart": None,
+            "publicationDateEnd": None,
+            "finalizationDateStart": utils.yesterday(),
+            "finalizationDateEnd": None,
+            "cpvCategoryId": None,
+            "contractingAuthorityId": None,
+            "supplierId": None,
+            "cpvCodeId": None,
+        }
+
+        body.update(body_params_overrides)
+        return self.session.post(
+            "/DirectAcquisitionCommon/GetDirectAcquisitionList/", json=body
+        )
+
+    def getPublicDirectAcquisition(self, da_id) -> httpx.Response:
+        return self.session.get(f"/PublicDirectAcquisition/getView/{da_id}")
+
+    def cpvs(self) -> dict:
+        if not hasattr(self, "__cpvs"):
+            self.__cpvs = utils.read_cpvs()
+
+        return self.__cpvs
