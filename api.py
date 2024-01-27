@@ -1,5 +1,6 @@
 import httpx
 import logging
+from tenacity import retry, retry_if_result, stop_after_attempt, wait_fixed
 
 from . import utils
 
@@ -7,6 +8,12 @@ from . import utils
 
 
 class SICAP:
+    retry_rules = dict(
+        retry=retry_if_result(utils.not_200),
+        stop=stop_after_attempt(3),
+        wait=wait_fixed(1),
+    )
+
     def __init__(
         self, secure: bool = True, timeout: httpx.Timeout = None, verbose: bool = False
     ) -> None:
@@ -28,6 +35,7 @@ class SICAP:
         """Returns server time as string e.g. 2023-06-01T00:00:00.000Z"""
         return self.session.get("/time/getServerTime").text
 
+    @retry(**retry_rules)
     def getCANoticeList(self, body_params_overrides: dict = {}) -> httpx.Response:
         """Returns a list of notices based on given filters"""
         body = {
@@ -50,10 +58,12 @@ class SICAP:
         body.update(body_params_overrides)
         return self.session.post("/NoticeCommon/GetCANoticeList/", json=body)
 
+    @retry(**retry_rules)
     def getCANotice(self, caNoticeId: int) -> httpx.Response:
         """Returns public notice document"""
         return self.session.get(f"C_PUBLIC_CANotice/get/{caNoticeId}")
 
+    @retry(**retry_rules)
     def getCANoticeContracts(self, body_params_overrides: dict = {}) -> httpx.Response:
         """Returns contracts within a public notice"""
         body = {
@@ -87,6 +97,7 @@ class SICAP:
         body.update(body_params_overrides)
         return self.session.post("/C_PUBLIC_CANotice/GetCANoticeContracts", json=body)
 
+    @retry(**retry_rules)
     def getPUBLICPINoticeAll(self, body_params_overrides: dict = {}) -> httpx.Response:
         """Returns priorinformation notices"""
         body = {"pageIndex": 0, "pageSize": 18, "sortProperties": [], "cpv": None}
@@ -94,6 +105,7 @@ class SICAP:
 
         return self.session.post("/PUBLICPINotice/GetAll/", json=body)
 
+    @retry(**retry_rules)
     def getCNoticeList(self, body_params_overrides: dict = {}) -> httpx.Response:
         body = {
             "sysNoticeTypeIds": [],
@@ -122,6 +134,7 @@ class SICAP:
         body.update(body_params_overrides)
         return self.session.post("/NoticeCommon/GetCNoticeList/", json=body)
 
+    @retry(**retry_rules)
     def getDaAwardNoticeList(self, body_params_overrides: dict = {}) -> httpx.Response:
         body = {
             "pageSize": 5,
@@ -140,15 +153,19 @@ class SICAP:
             "/DaAwardNoticeCommon/GetDaAwardNoticeList/", json=body
         )
 
+    @retry(**retry_rules)
     def getPublicDAAwardNotice(self, notice_id: int) -> httpx.Response:
         return self.session.get(f"/PublicDAAwardNotice/getView/{notice_id}")
 
+    @retry(**retry_rules)
     def getCAEntityView(self, ca_entity_id: int) -> httpx.Response:
         return self.session.get(f"/Entity/getCAEntityView/{ca_entity_id}")
 
+    @retry(**retry_rules)
     def getSUEntityView(self, su_entity_id: int) -> httpx.Response:
         return self.session.get(f"/Entity/getSUEntityView/{su_entity_id}")
 
+    @retry(**retry_rules)
     def getDirectAcquisitionList(
         self, body_params_overrides: dict = {}
     ) -> httpx.Response:
@@ -173,6 +190,7 @@ class SICAP:
             "/DirectAcquisitionCommon/GetDirectAcquisitionList/", json=body
         )
 
+    @retry(**retry_rules)
     def getPublicDirectAcquisition(self, da_id) -> httpx.Response:
         return self.session.get(f"/PublicDirectAcquisition/getView/{da_id}")
 

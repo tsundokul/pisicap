@@ -32,3 +32,7 @@ def read_cpvs() -> dict:
     cpvs_path = pathlib.Path(__file__).parent / "cpvs.json"
     with open(cpvs_path) as f:
         return json.load(f)
+
+
+def not_200(response):
+    return response.status_code != 200
