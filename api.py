@@ -135,6 +135,15 @@ class SICAP:
         return self.session.post("/NoticeCommon/GetCNoticeList/", json=body)
 
     @retry(**retry_rules)
+    def getProcedureView(
+        self, proc_id: int, params_overrides: dict = {}
+    ) -> httpx.Response:
+        params = {"procedureId": proc_id, "procedureLotId": "undefined"}
+        params.update(params_overrides)
+
+        return self.session.get("PUBLICProcedure/GetProcedureView/", params=params)
+
+    @retry(**retry_rules)
     def getDaAwardNoticeList(self, body_params_overrides: dict = {}) -> httpx.Response:
         body = {
             "pageSize": 5,
