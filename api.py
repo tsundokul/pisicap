@@ -203,6 +203,24 @@ class SICAP:
     def getPublicDirectAcquisition(self, da_id) -> httpx.Response:
         return self.session.get(f"/PublicDirectAcquisition/getView/{da_id}")
 
+    @retry(**retry_rules)
+    def getRfqInvitationView(self, invitation_id: int) -> httpx.Response:
+        return self.session.get(
+            f"/PublicRFQInvitation/getRfqInvitationView/?rfqInvitationId={invitation_id}"
+        )
+
+    @retry(**retry_rules)
+    def getProcedureReports(self, proc_id: int) -> httpx.Response:
+        return self.session.get(
+            f"/PUBLICProcedure/GetProcedureReports/?procedureId={proc_id}"
+        )
+
+    @retry(**retry_rules)
+    def getProcedureStatementView(self, proc_st_id: int) -> httpx.Response:
+        return self.session.get(
+            f"/PUBLICProcedure/GetProcedureStatementView/?procedureStatementId={proc_st_id}"
+        )
+
     def cpvs(self) -> dict:
         if not hasattr(self, "__cpvs"):
             self.__cpvs = utils.read_cpvs()
